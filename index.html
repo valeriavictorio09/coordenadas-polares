@@ -4,15 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portal de Coordenadas Polares y Curvas en R²</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Yellowtail&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="site-header">
   <div class="wrap">
-    <span class="brand">r, θ</span>
+    <span class="brand">r, θ <span class="brand-dot">·</span> lab</span>
     <nav>
       <a href="#fundamentos">Fundamentos</a>
       <a href="#conversion">Conversión</a>
@@ -23,15 +30,27 @@
 </header>
 
 <section class="hero">
-  <div class="wrap">
-    <h1>El plano visto desde un centro</h1>
-    <p class="lede">Cartesiano describe un punto por dos distancias perpendiculares. Polar lo describe por una distancia y un giro. Este portal recorre ambos sistemas, cómo traducirse entre ellos, y por qué el segundo resuelve límites que el primero no puede.</p>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Cálculo de varias variables</p>
+      <h1>El plano visto desde <em>un centro</em></h1>
+      <p class="lede">Cartesiano describe un punto por dos distancias perpendiculares. Polar lo describe por una distancia y un giro. Este laboratorio recorre ambos sistemas, cómo traducirse entre ellos, y por qué el segundo resuelve límites que el primero no puede.</p>
+      <div class="hero-tags">
+        <span>r · θ</span>
+        <span>arrastrable</span>
+        <span>tiempo real</span>
+      </div>
+    </div>
+    <div class="scope-panel">
+      <canvas id="starfield" width="420" height="360" aria-hidden="true"></canvas>
+      <div class="scope-label">TRAZO EN VIVO</div>
+      <canvas id="heroCanvas" width="420" height="360" aria-hidden="true"></canvas>
+    </div>
   </div>
-  <canvas id="heroCanvas" width="600" height="360" aria-hidden="true"></canvas>
 </section>
 
 <!-- SECCIÓN 1: FUNDAMENTOS -->
-<section id="fundamentos" class="section">
+<section id="fundamentos" class="section accent-blue">
   <div class="wrap">
     <p class="eyebrow">Sección 1</p>
     <h2>Fundamentos del sistema polar</h2>
@@ -39,28 +58,34 @@
     <div class="two-col">
       <div>
         <h3>El Polo y el Eje Polar</h3>
-        <p>El <strong>Polo</strong> es el punto fijo desde el cual se miden todas las distancias — el equivalente polar del origen. El <strong>Eje Polar</strong> es el rayo horizontal que sale del polo hacia la derecha; a partir de él se miden los ángulos θ.</p>
-        <p>Un punto queda descrito por el par <strong>(r, θ)</strong>: r es la distancia del punto al polo, θ es el ángulo entre el eje polar y el segmento que une el polo con el punto, medido en sentido antihorario.</p>
+        <p>El <strong>Polo</strong> es el punto fijo desde el cual se miden todas las distancias — el equivalente polar del origen. El <strong>Eje Polar</strong> es el rayo horizontal que sale del polo hacia la derecha; a partir de él se miden los ángulos <span class="math">$\theta$</span>.</p>
+        <p>Un punto queda descrito por el par <strong>(r, θ)</strong>: <span class="math">$r$</span> es la distancia del punto al polo, <span class="math">$\theta$</span> es el ángulo entre el eje polar y el segmento que une el polo con el punto, medido en sentido antihorario.</p>
       </div>
-      <canvas id="poloCanvas" width="360" height="300"></canvas>
+      <div class="scope-panel small">
+        <div class="scope-label">POLO</div>
+        <canvas id="poloCanvas" width="340" height="300"></canvas>
+      </div>
     </div>
 
     <h3>Radio negativo y ángulo horario</h3>
-    <p>Cuando r &lt; 0, el punto se coloca en la dirección opuesta a θ (se refleja a través del polo). Cuando θ &lt; 0, el ángulo se mide en sentido horario en vez de antihorario. Prueba los controles:</p>
+    <p>Cuando r &lt; 0, el punto se coloca en la dirección opuesta a θ (se refleja a través del polo). Cuando θ &lt; 0, el ángulo se mide en sentido horario en vez de antihorario. Prueba los controles, o arrastra el punto directamente sobre la gráfica:</p>
 
     <div class="demo-box">
       <div class="controls">
-        <label>r: <input type="range" id="signR" min="-4" max="4" step="0.5" value="3"><span id="signRVal">3</span></label>
-        <label>θ (°): <input type="range" id="signTheta" min="-360" max="360" step="15" value="45"><span id="signThetaVal">45°</span></label>
+        <label>r: <input type="range" id="signR" min="-4" max="4" step="0.5" value="3"><span class="val" id="signRVal">3</span></label>
+        <label>θ (°): <input type="range" id="signTheta" min="-360" max="360" step="15" value="45"><span class="val" id="signThetaVal">45°</span></label>
       </div>
-      <canvas id="signCanvas" width="360" height="360"></canvas>
+      <div class="scope-panel">
+        <canvas id="signCanvas" width="360" height="360"></canvas>
+        <div class="drag-hint">arrastra el punto ●</div>
+      </div>
       <p id="signNote" class="note"></p>
     </div>
   </div>
 </section>
 
 <!-- SECCIÓN 2: CONVERSIÓN -->
-<section id="conversion" class="section alt">
+<section id="conversion" class="section alt accent-green">
   <div class="wrap">
     <p class="eyebrow">Sección 2</p>
     <h2>El puente de conversión</h2>
@@ -69,43 +94,47 @@
     <div class="formulas">
       <div class="formula-card">
         <span class="tag">Polar → Cartesiano</span>
-        <p>x = r · cos θ</p>
-        <p>y = r · sen θ</p>
+        <p class="math">$x = r\cos\theta$</p>
+        <p class="math">$y = r\operatorname{sen}\theta$</p>
       </div>
       <div class="formula-card">
         <span class="tag">Cartesiano → Polar</span>
-        <p>r² = x² + y²</p>
-        <p>tan θ = y / x</p>
+        <p class="math">$r^2 = x^2 + y^2$</p>
+        <p class="math">$\tan\theta = \dfrac{y}{x}$</p>
       </div>
     </div>
 
     <h3>Convertidor interactivo</h3>
+    <p>Escribe valores en los campos, o arrastra directamente cualquiera de los dos puntos sobre la cuadrícula.</p>
     <div class="demo-box">
       <div class="converter">
         <div class="conv-col">
-          <h4>Cartesiano → Polar</h4>
+          <h4><span class="dot dot-a1"></span> Cartesiano → Polar</h4>
           <label>x: <input type="number" id="cx" value="3"></label>
           <label>y: <input type="number" id="cy" value="3"></label>
           <p class="result" id="cToP"></p>
         </div>
         <div class="conv-col">
-          <h4>Polar → Cartesiano</h4>
+          <h4><span class="dot dot-a2"></span> Polar → Cartesiano</h4>
           <label>r: <input type="number" id="pr" value="4"></label>
           <label>θ (°): <input type="number" id="pt" value="30"></label>
           <p class="result" id="pToC"></p>
         </div>
       </div>
-      <canvas id="convCanvas" width="700" height="320"></canvas>
+      <div class="scope-panel wide">
+        <canvas id="convCanvas" width="680" height="320"></canvas>
+        <div class="drag-hint">arrastra cualquiera de los dos puntos</div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- SECCIÓN 3: LABORATORIO -->
-<section id="laboratorio" class="section">
+<section id="laboratorio" class="section accent-gold">
   <div class="wrap">
     <p class="eyebrow">Sección 3</p>
     <h2>Laboratorio interactivo de curvas polares</h2>
-    <p>Toda curva de esta familia sigue una ecuación r = f(θ) construida con dos o tres parámetros. Cambia el tipo de curva y mueve los controles para ver cómo cada parámetro deforma la gráfica.</p>
+    <p>Toda curva de esta familia sigue una ecuación <span class="math">$r = f(\theta)$</span> construida con dos o tres parámetros. Cambia el tipo de curva, mueve los controles, o anima el trazo para ver cómo se construye θ a θ.</p>
 
     <div class="demo-box lab">
       <div class="controls">
@@ -117,35 +146,65 @@
             <option value="lemniscate">Lemniscata — r² = a²·cos(2θ)</option>
           </select>
         </label>
-        <label>a: <input type="range" id="paramA" min="0.5" max="4" step="0.1" value="2"><span id="paramAVal">2</span></label>
-        <label id="bWrap">b: <input type="range" id="paramB" min="0" max="4" step="0.1" value="1"><span id="paramBVal">1</span></label>
-        <label id="nWrap">n: <input type="range" id="paramN" min="1" max="8" step="1" value="3"><span id="paramNVal">3</span></label>
+        <label>a: <input type="range" id="paramA" min="0.5" max="4" step="0.1" value="2"><span class="val" id="paramAVal">2</span></label>
+        <label id="bWrap">b: <input type="range" id="paramB" min="0" max="4" step="0.1" value="1"><span class="val" id="paramBVal">1</span></label>
+        <label id="nWrap">n: <input type="range" id="paramN" min="1" max="8" step="1" value="3"><span class="val" id="paramNVal">3</span></label>
       </div>
-      <canvas id="labCanvas" width="500" height="500"></canvas>
+      <div class="lab-toolbar">
+        <button id="labAnimateBtn" class="lab-btn" type="button">▶ Animar trazo</button>
+        <button id="labResetZoomBtn" class="lab-btn ghost" type="button">Restablecer zoom</button>
+        <span class="note inline">rueda del ratón = zoom</span>
+      </div>
+      <div class="scope-panel">
+        <canvas id="labCanvas" width="480" height="480"></canvas>
+      </div>
       <p class="note" id="labExplain"></p>
     </div>
   </div>
 </section>
 
 <!-- SECCIÓN 4: LÍMITES -->
-<section id="limites" class="section alt">
+<section id="limites" class="section alt accent-purple">
   <div class="wrap">
     <p class="eyebrow">Sección 4</p>
     <h2>Aplicación a límites en dos variables</h2>
-    <p>Muchos límites de la forma lím<sub>(x,y)→(0,0)</sub> f(x,y) producen la indeterminación 0/0 por sustitución directa. El cambio a polares (x = r cos θ, y = r sen θ) convierte el límite doble en uno de una sola variable, r → 0⁺, con θ fijo.</p>
+    <p>Muchos límites de la forma <span class="math">$\lim_{(x,y)\to(0,0)} f(x,y)$</span> producen la indeterminación 0/0 por sustitución directa. El cambio a polares (<span class="math">$x = r\cos\theta$</span>, <span class="math">$y = r\operatorname{sen}\theta$</span>) convierte el límite doble en uno de una sola variable, <span class="math">$r \to 0^+$</span>, con θ fijo.</p>
 
     <div class="worked-example">
       <h3>Ejemplo resuelto</h3>
-      <p><strong>Límite:</strong> lím<sub>(x,y)→(0,0)</sub> (x²y) / (x² + y²)</p>
+      <p><strong>Límite:</strong> <span class="math">$\displaystyle\lim_{(x,y)\to(0,0)} \frac{x^2y}{x^2+y^2}$</span></p>
       <ol>
-        <li>Sustituir x = r cos θ, y = r sen θ.</li>
-        <li>Numerador: (r cos θ)²(r sen θ) = r³ cos²θ sen θ.</li>
-        <li>Denominador: r² cos²θ + r² sen²θ = r².</li>
-        <li>El cociente se simplifica a r · cos²θ · sen θ.</li>
-        <li>Como |cos²θ · sen θ| ≤ 1 para cualquier θ, y r → 0, todo el producto → 0 sin importar la dirección θ.</li>
+        <li>Sustituir <span class="math">$x = r\cos\theta$</span>, <span class="math">$y = r\operatorname{sen}\theta$</span>.</li>
+        <li>Numerador: <span class="math">$(r\cos\theta)^2(r\operatorname{sen}\theta) = r^3\cos^2\theta\operatorname{sen}\theta$</span>.</li>
+        <li>Denominador: <span class="math">$r^2\cos^2\theta + r^2\operatorname{sen}^2\theta = r^2$</span>.</li>
+        <li>El cociente se simplifica a <span class="math">$r\cos^2\theta\operatorname{sen}\theta$</span>.</li>
+        <li>Como <span class="math">$|\cos^2\theta\operatorname{sen}\theta| \le 1$</span> para cualquier θ, y <span class="math">$r \to 0$</span>, todo el producto → 0 sin importar la dirección θ.</li>
         <li><strong>Conclusión:</strong> el límite existe y vale 0.</li>
       </ol>
       <p class="note">La clave: si el resultado depende de θ, el límite no existe (distintas trayectorias dan distintos valores). Si θ desaparece o queda acotado y multiplicado por r → 0, el límite sí existe.</p>
+    </div>
+
+    <h3>Compruébalo tú mismo: acércate al origen por distintas trayectorias</h3>
+    <p>Elige una función, fija un ángulo θ (una trayectoria recta hacia el origen) y observa qué le pasa a f(x, y) conforme r se acerca a 0. Después cambia θ y repite.</p>
+
+    <div class="demo-box lab">
+      <div class="controls">
+        <label>Función:
+          <select id="limitFunc">
+            <option value="f1">f(x,y) = x²y / (x²+y²)</option>
+            <option value="f2">f(x,y) = xy / (x²+y²)</option>
+          </select>
+        </label>
+        <label>θ (trayectoria): <input type="range" id="limitTheta" min="0" max="360" step="5" value="45"><span class="val" id="limitThetaVal">45°</span></label>
+      </div>
+      <div class="lab-toolbar">
+        <button id="limitAnimBtn" class="lab-btn" type="button">▶ Acercarse al origen</button>
+        <span class="note inline" id="limitReadout">r = 1.200, θ = 45° → f(x,y) ≈ 0</span>
+      </div>
+      <div class="scope-panel">
+        <canvas id="limitsCanvas" width="380" height="380"></canvas>
+      </div>
+      <p class="note" id="limitVerdict"></p>
     </div>
   </div>
 </section>
